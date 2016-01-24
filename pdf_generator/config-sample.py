@@ -18,7 +18,7 @@ class BaseConfig(object):
     # para usar con Docker
     # LOG_PATH   = '/var/log/app/{}'.format(os.environ.get('LOG_FILE', 'app.log'))
 
-    MONGO_DBNAME = os.environ('PDF_GENERATOR_DBNAME') or 'pdf-generator'
+    MONGO_DBNAME = os.environ.get('PDF_GENERATOR_DBNAME') or 'pdf-generator'
     MONGO_HOST   = os.environ.get('MONGODB_PORT_27017_TCP_ADDR') or 'localhost'
     # MONGO_URI    =
     # MONGO_PORT   = 27017
@@ -41,6 +41,9 @@ class BaseConfig(object):
     ]
 
     PDF_GENERATOR_MAX_INTENTOS = 3
+
+    # en segundos
+    PDF_GENERATOR_TIMEOUT      = 30
 
     # formato de URL para llamadas a servicios de la web
     PDF_GENERATOR_URL_EXTERNA = 'http://localhost/mantelroom/wp-admin/admin-ajax.php?action={}'

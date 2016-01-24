@@ -14,7 +14,7 @@ import subprocess as sp
 # from pyPdf import PdfFileReader, PdfFileWriter
 from pdf_generator import mongo
 from pdf_generator.config import Config
-from .util import _debug, _info, _error
+from .util import _debug, _info, _error, Timeout
 
 
 class PdfGenerator(object):
@@ -103,27 +103,27 @@ class PdfGenerator(object):
                     margins = data.get('margins')
                     if margins:
                         params.append('--margin-top')
-                        params.append(margins[0])
+                        params.append(str(margins[0]))
 
                         params.append('--margin-right')
-                        params.append(margins[1])
+                        params.append(str(margins[1]))
 
                         params.append('--margin-bottom')
-                        params.append(margins[2])
+                        params.append(str(margins[2]))
 
                         params.append('--margin-left')
-                        params.append(margins[3])
+                        params.append(str(margins[3]))
 
                     # url
-                    params.append('"{}"'.format(data.get('url')))
+                    params.append(data.get('url'))
 
                     # fichero temporal para salida
-                    with tempfile.NamedTemporaryFile(prefix='pdf_generator_', suffix='.pdf', delete=False) as fichero_pdf:
+                    with tempfile.NamedTemporaryFile(prefix='pdf_generator_', suffix='.pdf') as fichero_pdf:
 
                         # indicar fichero de salida
                         params.append(fichero_pdf.name)
 
-                        _debug(u'Generando PDF')
+                        _debug(u'Generando PDF {}'.format(fichero_pdf.name))
                         sp.check_call(params)
 
                         fichero_pdf.seek(0)
@@ -133,15 +133,34 @@ class PdfGenerator(object):
                         mongo.db.tareas.update(dict(_id=tarea['_id']),
                                                {'$set': {'completado': dt.datetime.now(pytz.utc),
                                                          'en_proceso': False,
-                                                         'datos.fichero_pdf': base64.b64encode(fichero_pdf.read())
+                                                         'datos.pdf': base64.b64encode(fichero_pdf.read())
                                                          }})
 
                 except Exception as e:
-                    import traceback
-                    traceback.print_exc()
-
                     _error(e)
                     datos_update = dict(en_proceso=False, intentos=tarea.get('intentos', 0) + 1)
                     mongo.db.tareas.update(dict(_id=tarea['_id']), {'$set': datos_update})
 
             time.sleep(random.randint(1, 2))
+
+    def resolve(self, data):
+        id_tarea = self.register(data)
+        max_intentos = 10
+        intentos = 0
+        while True:
+            tarea = mongo.db.tareas.find_one(dict(_id=id_tarea, completado={'$ne': None}))
+            if tarea is not None:
+                break
+
+            else:
+                tarea = mongo.db.tareas.find_one(dict(_id=id_tarea,
+                                                      intentos=Config.PDF_GENERATOR_MAX_INTENTOS))
+                if tarea is not None:
+                    raise Exception('Se ha alcanzado el nº máximo de intentos')
+
+            time.sleep(2)
+            intentos += 1
+            if intentos == max_intentos:
+                raise Exception('Se ha alcanzado el nº máximo de intentos')
+
+        return tarea['datos']

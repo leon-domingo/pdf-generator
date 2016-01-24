@@ -8,7 +8,7 @@ from ..lib.util import template_or_json
 
 class PdfGeneratorRoute(FlaskView):
 
-    route_prefix = '/'
+    route_prefix = ''
 
     # /to-pdf
     @route('/to-pdf', methods=['POST'])
@@ -30,9 +30,10 @@ class PdfGeneratorRoute(FlaskView):
 
         try:
             pg = PdfGenerator()
-            id_tarea = pg.register(request.get_json())
+            # id_tarea = pg.register(request.get_json())
+            datos = pg.resolve(request.get_json())
 
-            return dict(status=True, id_tarea=str(id_tarea))
+            return dict(status=True, pdf=datos['pdf'])
 
         except Exception as e:
             current_app.logger.error(e)
