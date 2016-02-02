@@ -18,6 +18,7 @@ class PdfGeneratorRoute(FlaskView):
         IN
             {
                 "headers": [["name", "value"], ...],
+                "cookies": [["name", "value"], ...],
                 "margins": [10, 10, 10, 10],
                 "size: "A3"
                 "url": "..."

@@ -91,6 +91,12 @@ class PdfGenerator(object):
                         params.append(h[0])
                         params.append(h[1])
 
+                    # --cookie name value
+                    for ck in data.get('cookies', []):
+                        params.append('--cookie')
+                        params.append(ck[0])
+                        params.append(ck[1])
+
                     # quiet
                     params.append('-q')
 
