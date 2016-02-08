@@ -10,11 +10,11 @@ import base64
 import tempfile
 import subprocess as sp
 # import requests
-# from StringIO import StringIO
-# from pyPdf import PdfFileReader, PdfFileWriter
+from StringIO import StringIO
+from pyPdf import PdfFileReader, PdfFileWriter
 from pdf_generator import mongo
 from pdf_generator.config import Config
-from .util import _debug, _info, _error, Timeout
+from .util import _debug, _info, _error  # Timeout
 
 
 class PdfGenerator(object):
@@ -132,14 +132,46 @@ class PdfGenerator(object):
                         _debug(u'Generando PDF {}'.format(fichero_pdf.name))
                         sp.check_call(params)
 
-                        fichero_pdf.seek(0)
+                        r = StringIO()
+
+                        # añadir "attachments" al PDF, si los hay
+                        attachments = data.get('attachments')
+                        if attachments:
+                            # añadir 1ª página de la factura
+                            pr = PdfFileReader(fichero_pdf)
+                            pw = PdfFileWriter()
+                            pw.addPage(pr.getPage(0))
+
+                            # añadir "adjuntos"
+                            for adjunto in attachments:
+                                s = StringIO()
+                                # decodificar adjunto (Base64)
+                                s.write(base64.b64decode(adjunto))
+                                s.seek(0)
+                                pr = PdfFileReader(s)
+
+                                # recorrer páginas del adjunto
+                                for p in range(pr.getNumPages()):
+                                    pw.addPage(pr.getPage(p))
+
+                            # escribir PDF resultado
+                            r_sin_codificar = StringIO()
+                            pw.write(r_sin_codificar)
+
+                            r_sin_codificar.seek(0)
+                            r.write(base64.b64encode(r_sin_codificar.read()))
+
+                        else:
+                            fichero_pdf.seek(0)
+                            r.write(base64.b64encode(fichero_pdf.read()))
                         
                         # actualizar tarea
                         _info(u'Actualizando tarea {}'.format(tarea['_id']))
+                        r.seek(0)
                         mongo.db.tareas.update(dict(_id=tarea['_id']),
                                                {'$set': {'completado': dt.datetime.now(pytz.utc),
                                                          'en_proceso': False,
-                                                         'datos.pdf': base64.b64encode(fichero_pdf.read())
+                                                         'datos.pdf': r.read(),
                                                          }})
 
                 except Exception as e:
