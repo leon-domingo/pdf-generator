@@ -3,15 +3,13 @@
 import pymongo
 import datetime as dt
 import pytz
-# import os
 import time
 import random
 import base64
 import tempfile
 import subprocess as sp
-# import requests
-from StringIO import StringIO
-from pyPdf import PdfFileReader, PdfFileWriter
+from io import StringIO
+from PyPDF2 import PdfFileReader, PdfFileWriter
 from pdf_generator import mongo
 from pdf_generator.config import Config
 from .util import _debug, _info, _error  # Timeout
@@ -23,8 +21,7 @@ class PdfGenerator(object):
         self.args = args
 
     def register(self, datos, prioridad=Config.get('PDF_GENERATOR_DEFAULT_PRIORITY', 10)):
-        """Registrar una nueva tarea para procesar un alta, indicando prioridad de ejecución opcionalmente"""
-
+        """Registrar una nueva tarea para procesar un alta, indicando prioridad de ejecución opcionalmente."""
         tarea = mongo.db.tareas.\
             insert_one(dict(datos=datos,
                             intentos=0,
@@ -36,8 +33,7 @@ class PdfGenerator(object):
         return tarea.inserted_id
 
     def schedule(self):
-        """Asignarle a cada tarea el proceso que la va a ejecutar"""
-
+        """Asignarle a cada tarea el proceso que la va a ejecutar."""
         p_actual = 0
         qry = dict(completado=None, en_proceso=False, proceso=None)
         while True:
@@ -164,7 +160,7 @@ class PdfGenerator(object):
                         else:
                             fichero_pdf.seek(0)
                             r.write(base64.b64encode(fichero_pdf.read()))
-                        
+
                         # actualizar tarea
                         _info(u'Actualizando tarea {}'.format(tarea['_id']))
                         r.seek(0)
