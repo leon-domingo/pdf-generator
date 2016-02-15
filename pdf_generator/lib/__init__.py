@@ -8,7 +8,7 @@ import random
 import base64
 import tempfile
 import subprocess as sp
-from io import StringIO
+from io import BytesIO
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from pdf_generator import mongo
 from pdf_generator.config import Config
@@ -128,7 +128,7 @@ class PdfGenerator(object):
                         _debug(u'Generando PDF {}'.format(fichero_pdf.name))
                         sp.check_call(params)
 
-                        r = StringIO()
+                        r = BytesIO()
 
                         # añadir "attachments" al PDF, si los hay
                         attachments = data.get('attachments')
@@ -140,7 +140,7 @@ class PdfGenerator(object):
 
                             # añadir "adjuntos"
                             for adjunto in attachments:
-                                s = StringIO()
+                                s = BytesIO()
                                 # decodificar adjunto (Base64)
                                 s.write(base64.b64decode(adjunto))
                                 s.seek(0)
@@ -151,7 +151,7 @@ class PdfGenerator(object):
                                     pw.addPage(pr.getPage(p))
 
                             # escribir PDF resultado
-                            r_sin_codificar = StringIO()
+                            r_sin_codificar = BytesIO()
                             pw.write(r_sin_codificar)
 
                             r_sin_codificar.seek(0)
@@ -167,10 +167,13 @@ class PdfGenerator(object):
                         mongo.db.tareas.update(dict(_id=tarea['_id']),
                                                {'$set': {'completado': dt.datetime.now(pytz.utc),
                                                          'en_proceso': False,
-                                                         'datos.pdf': r.read(),
+                                                         'datos.pdf': r.read().decode('utf8'),
                                                          }})
 
                 except Exception as e:
+                    # import traceback
+                    # traceback.print_exc()
+
                     _error(e)
                     datos_update = dict(en_proceso=False, intentos=tarea.get('intentos', 0) + 1)
                     mongo.db.tareas.update(dict(_id=tarea['_id']), {'$set': datos_update})
