@@ -9,9 +9,9 @@ class BaseConfig(object):
     @classmethod
     def get(cls, attr_name, default=None):
         return getattr(cls, attr_name, default)
-    
+
     DEBUG = os.environ.get('PDF_GENERATOR_TEST', '1') == '1'
-    
+
     # logging settings
     LOG_LEVEL  = logging.DEBUG
     LOG_FORMAT = '{0} %(asctime)s,%(msecs)03d %(levelname)-5.5s [%(name)s] %(message)s'.format(os.environ.get('PDF_GENERATOR_WORKER_NAME') or '*')
@@ -32,7 +32,7 @@ class BaseConfig(object):
     WKHTMLTOPDF_PATH = '/home/leon/app/bin/wkhtmltopdf'
 
     PDF_GENERATOR_DEFAULT_PRIORITY = int(os.environ.get('PDF_GENERATOR_DEFAULT_PRIORITY', 10))
-    
+
     PDF_GENERATOR_PROCESOS = [
         PDF_GENERATOR_DEFAULT_PRIORITY,
         PDF_GENERATOR_DEFAULT_PRIORITY,
@@ -43,7 +43,10 @@ class BaseConfig(object):
     PDF_GENERATOR_MAX_INTENTOS = 3
 
     # en segundos
-    PDF_GENERATOR_TIMEOUT      = 30
+    PDF_GENERATOR_MAX_AGE = 12 * 3600
+
+    # en segundos
+    PDF_GENERATOR_TIMEOUT = 30
 
     # formato de URL para llamadas a servicios de la web
     PDF_GENERATOR_URL_EXTERNA = 'http://localhost/mantelroom/wp-admin/admin-ajax.php?action={}'
@@ -55,6 +58,7 @@ class BaseConfig(object):
     COMMANDS = [
         ('pdf_generator.commands', 'ScheduleCmd', 'schedule'),
         ('pdf_generator.commands', 'ProcesarCmd', 'procesar'),
+        ('pdf_generator.commands', 'CleanCmd', 'clean'),
     ]
 
 
