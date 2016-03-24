@@ -57,6 +57,22 @@ class PdfGenerator(object):
 
             time.sleep(random.randint(1, 2))
 
+    def clean(self):
+        """Limpiar el campo "datos.pdf" para tareas ya procesadas"""
+        # limpiar las tareas con más de 12 horas de antiguedad
+        max_age = Config.get('PDF_GENERATOR_MAX_AGE', 12 * 3600)
+        limit = dt.datetime.now(pytz.utc) - dt.timedelta(seconds=max_age)
+        qry = dict(completado={'$lt': limit}, limpio=None)
+        for tarea in mongo.db.tareas.find(qry):
+            try:
+                _info('Limpiando tarea "{}"...'.format(tarea['_id']))
+                mongo.db.tareas.update(dict(_id=tarea['_id']), {'$set': {'datos.pdf': '',
+                                                                         'datos.attachments': [],
+                                                                         'limpio': dt.datetime.now(pytz.utc)}})
+
+            except Exception as e:
+                _error(e)
+
     def process(self, proceso):
         qry = dict(proceso=int(proceso), completado=None, intentos={'$lt': Config.get('PDF_GENERATOR_MAX_INTENTOS', 3)})
 
