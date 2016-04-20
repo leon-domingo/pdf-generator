@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding=utf8
 
 from flask import Flask
 from flask.ext.pymongo import PyMongo

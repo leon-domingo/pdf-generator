@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding=utf8
 
 from flask import request, current_app
 from flask.ext.classy import FlaskView, route

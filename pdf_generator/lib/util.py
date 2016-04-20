@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding=utf8
 
 from flask import request, render_template, current_app
 from flask.json import jsonify
@@ -25,7 +25,7 @@ def template_or_json(template=None):
             ctx = f(*args, **kwargs)
             if request.is_xhr or not template:
                 return jsonify(ctx)
-                
+
             else:
                 return render_template(template, **ctx)
 

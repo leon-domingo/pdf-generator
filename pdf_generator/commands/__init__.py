@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding=utf8
 
 from flask.ext.script import Command, Option
 from ..lib import PdfGenerator

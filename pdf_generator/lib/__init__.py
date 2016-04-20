@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding=utf8
 
 import pymongo
 import datetime as dt
