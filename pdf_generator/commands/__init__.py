@@ -30,6 +30,11 @@ class ProcesarCmd(Command):
 class CleanCmd(Command):
     """Limpiar tareas ya realizadas"""
 
-    def run(self):
+    option_list = (
+        Option('--age', '-a', dest='age', default=None),
+    )
+
+    def run(self, age):
         pg = PdfGenerator()
-        pg.clean()
+        age = int(age) if age is not None else None
+        pg.clean(age)

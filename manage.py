@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# coding=utf8
 
 from flask.ext.script import Manager
 from pdf_generator import create_app
@@ -12,7 +12,7 @@ manager = Manager(app)
 for module_name, class_name, command in Config.COMMANDS:
     app.logger.debug(u'Setting up command: "{}"'.format(command))
     m = __import__(module_name, fromlist=[class_name])
-    
+
     try:
         manager.add_command(command, getattr(m, class_name)())
 
