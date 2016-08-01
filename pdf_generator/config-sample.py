@@ -48,11 +48,10 @@ class BaseConfig(object):
     # en segundos
     PDF_GENERATOR_TIMEOUT = 30
 
-    # formato de URL para llamadas a servicios de la web
-    PDF_GENERATOR_URL_EXTERNA = 'http://localhost/mantelroom/wp-admin/admin-ajax.php?action={}'
-
     APPS = [
-        'pdf_generator.routes',
+        # 'pdf_generator.routes',
+        # (path.class_name, route_base)
+        ('pdf_generator.routes.PdfGeneratorRoute', '/'),
     ]
 
     COMMANDS = [

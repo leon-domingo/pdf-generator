@@ -1,6 +1,6 @@
 # coding=utf8
 
-from flask.ext.script import Command, Option
+from flask_script import Command, Option
 from ..lib import PdfGenerator
 
 

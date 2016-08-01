@@ -1,7 +1,7 @@
 # coding=utf8
 
 from flask import request, current_app
-from flask.ext.classy import FlaskView, route
+from flask_classy import FlaskView, route
 from ..lib import PdfGenerator
 from ..lib.util import template_or_json
 
@@ -26,8 +26,8 @@ class PdfGeneratorRoute(FlaskView):
             }
 
         OUT
-            status    <bool>
-            id_tarea  <str>
+            status <bool> --> True=éxito, False=fallo
+            pdf    <str>  --> Contenido del PDF en Base64
         """
 
         try:
@@ -42,5 +42,6 @@ class PdfGeneratorRoute(FlaskView):
             return dict(status=False)
 
 
-def init_routes(app):
-    PdfGeneratorRoute.register(app, route_base='/')
+# def init_routes(app):
+#     """Route initialization."""
+#     PdfGeneratorRoute.register(app, route_base='/')

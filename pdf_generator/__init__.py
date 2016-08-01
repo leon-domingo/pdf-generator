@@ -1,7 +1,7 @@
 # coding=utf8
 
 from flask import Flask
-from flask.ext.pymongo import PyMongo
+from flask_pymongo import PyMongo
 from .config import Config
 import logging
 import sys
@@ -12,6 +12,7 @@ mongo = PyMongo()
 
 
 def create_app():
+    """Factory app creator."""
 
     app = Flask(__name__, static_url_path='', static_folder='static')
 
@@ -49,9 +50,24 @@ def create_app():
 
     # set up apps (routes)
     for app_module in Config.APPS:
-        app.logger.debug(u'Setting up "{}"'.format(app_module))
-        m = __import__(app_module, fromlist=['init_routes'])
+        if isinstance(app_module, str):
+            # 'foo.bar'
+            app.logger.debug(u'Setting up route "{}"'.format(app_module))
+            m = __import__(app_module, fromlist=['init_routes'])
 
-        m.init_routes(app)
+            m.init_routes(app)
+
+        elif hasattr(app_module, '__iter__'):
+            # list, tuple
+            # ('foo.bar.BazRoute', '/')
+            path, route_base = app_module
+            module_name = '.'.join(path.split('.')[:-1])
+            cls_name = path.split('.')[-1]
+
+            app.logger.debug(u'Setting up route "{}" on "{}"'.format(path, route_base))
+            m = __import__(module_name, fromlist=[cls_name])
+
+            cls = getattr(m, cls_name)
+            cls.register(app, route_base=route_base)
 
     return app
