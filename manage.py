@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=utf8
 
-from flask.ext.script import Manager
+from flask_script import Manager
 from pdf_generator import create_app
 from pdf_generator.config import Config
 

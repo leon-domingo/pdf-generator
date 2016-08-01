@@ -206,8 +206,7 @@ class PdfGenerator(object):
                 break
 
             else:
-                tarea = mongo.db.tareas.find_one(dict(_id=id_tarea,
-                                                      intentos=Config.PDF_GENERATOR_MAX_INTENTOS))
+                tarea = mongo.db.tareas.find_one(dict(_id=id_tarea, intentos=Config.PDF_GENERATOR_MAX_INTENTOS))
                 if tarea is not None:
                     raise Exception('Se ha alcanzado el nº máximo de intentos')
 
