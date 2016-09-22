@@ -119,9 +119,9 @@ class PdfGenerator(object):
                         (m_top, m_right, m_bottom, m_left) = margins
 
                         params.extend(['--margin-top', str(m_top)])
-                        params.append(['--margin-right', str(m_right)])
-                        params.append(['--margin-bottom', str(m_bottom)])
-                        params.append(['--margin-left', str(m_left)])
+                        params.extend(['--margin-right', str(m_right)])
+                        params.extend(['--margin-bottom', str(m_bottom)])
+                        params.extend(['--margin-left', str(m_left)])
 
                     # viewport-size
                     viewport_size = data.get('viewport-size')
@@ -136,6 +136,8 @@ class PdfGenerator(object):
 
                         # indicar fichero de salida
                         params.append(fichero_pdf.name)
+
+                        _debug(params)
 
                         _debug(u'Generando PDF {}'.format(fichero_pdf.name))
                         sp.check_call(params)
