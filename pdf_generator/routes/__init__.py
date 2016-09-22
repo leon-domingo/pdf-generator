@@ -21,6 +21,7 @@ class PdfGeneratorRoute(FlaskView):
                 "cookies": [["name", "value"], ...],
                 "margins": [10, 10, 10, 10],
                 "size: "A3"
+                "viewport-size": "1200x1200"
                 "url": "...",
                 "attachments": ["...", ...]
             }

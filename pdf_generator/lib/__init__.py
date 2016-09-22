@@ -90,6 +90,7 @@ class PdfGenerator(object):
                     mongo.db.tareas.update(dict(_id=tarea['_id']), {'$set': dict(en_proceso=True)})
 
                     data = tarea['datos']
+                    _debug(data)
 
                     # ~/app/bin/wkhtmltopdf --custom-header Authorization pakoporraxeselmejor -q \
                     # -s A3 --margin-top 3 --margin-right 3 --margin-bottom 3 --margin-left 3 \
@@ -98,39 +99,34 @@ class PdfGenerator(object):
                     params = [Config.WKHTMLTOPDF_PATH]
 
                     # --custom-header
-                    for h in data.get('headers', []):
-                        params.append('--custom-header')
-                        params.append(h[0])
-                        params.append(h[1])
+                    for (h_name, h_value) in data.get('headers', []):
+                        params.extend(['--custom-header', h_name, h_value])
 
                     # --cookie name value
-                    for ck in data.get('cookies', []):
-                        params.append('--cookie')
-                        params.append(ck[0])
-                        params.append(ck[1])
+                    for (ck_name, ck_value) in data.get('cookies', []):
+                        params.extend(['--cookie', ck_name, ck_value])
 
                     # quiet
                     params.append('-q')
 
                     # size
                     size = data.get('size', 'A3')
-                    params.append('-s')
-                    params.append(size)
+                    params.extend(['-s', size])
 
                     # margins
                     margins = data.get('margins')
                     if margins:
-                        params.append('--margin-top')
-                        params.append(str(margins[0]))
+                        (m_top, m_right, m_bottom, m_left) = margins
 
-                        params.append('--margin-right')
-                        params.append(str(margins[1]))
+                        params.extend(['--margin-top', str(m_top)])
+                        params.append(['--margin-right', str(m_right)])
+                        params.append(['--margin-bottom', str(m_bottom)])
+                        params.append(['--margin-left', str(m_left)])
 
-                        params.append('--margin-bottom')
-                        params.append(str(margins[2]))
-
-                        params.append('--margin-left')
-                        params.append(str(margins[3]))
+                    # viewport-size
+                    viewport_size = data.get('viewport-size')
+                    if viewport_size:
+                        params.extend(['--viewport-size', viewport_size])
 
                     # url
                     params.append(data.get('url'))
