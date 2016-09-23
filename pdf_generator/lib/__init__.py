@@ -140,7 +140,8 @@ class PdfGenerator(object):
                         _debug(params)
 
                         _debug(u'Generando PDF {}'.format(fichero_pdf.name))
-                        sp.check_call(params)
+                        # sp.check_call(params)
+                        sp.call(params)
 
                         r = BytesIO()
 
