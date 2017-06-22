@@ -22,13 +22,13 @@ class PdfGenerator(object):
 
     def register(self, datos, prioridad=Config.get('PDF_GENERATOR_DEFAULT_PRIORITY', 10)):
         """Registrar una nueva tarea para procesar un alta, indicando prioridad de ejecución opcionalmente."""
-        tarea = mongo.db.tareas.\
-            insert_one(dict(datos=datos,
-                            intentos=0,
-                            registrado=dt.datetime.now(pytz.utc),
-                            prioridad=prioridad,
-                            completado=None,
-                            en_proceso=False))
+        tarea = mongo.db.tareas\
+            .insert_one(dict(datos=datos,
+                             intentos=0,
+                             registrado=dt.datetime.now(pytz.utc),
+                             prioridad=prioridad,
+                             completado=None,
+                             en_proceso=False))
 
         return tarea.inserted_id
 
@@ -78,10 +78,10 @@ class PdfGenerator(object):
 
         while True:
             _info('[PROCESO {}: Buscando tareas pendientes...]'.format(proceso))
-            for tarea in mongo.db.tareas.\
-                    find(qry).sort([['prioridad', pymongo.ASCENDING],
-                                    ['registrado', pymongo.ASCENDING]]).\
-                    limit(1):
+            for tarea in mongo.db.tareas\
+                    .find(qry).sort([['prioridad', pymongo.ASCENDING],
+                                     ['registrado', pymongo.ASCENDING]])\
+                    .limit(1):
 
                 try:
                     _info(u'Procesando tarea: [{} (registrada el {})]'.format(tarea['_id'], tarea.get('registrado')))

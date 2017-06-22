@@ -20,7 +20,7 @@ def create_app():
     app.config.from_object(Config)
 
     # set up logging
-    lh  = logging.StreamHandler(sys.stderr)
+    lh  = logging.StreamHandler(sys.stdout)
     fmt = logging.Formatter(Config.LOG_FORMAT)
     lh.setFormatter(fmt)
 
