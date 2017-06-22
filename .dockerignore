@@ -1,0 +1,10 @@
+Dockerfile
+.dockerignore
+.git/
+.gitignore
+activate
+**/*.pyc
+**/__pycache__
+venv
+README.md
+*sublime*

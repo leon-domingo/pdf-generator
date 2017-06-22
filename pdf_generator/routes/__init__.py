@@ -1,9 +1,12 @@
 # coding=utf8
 
-from flask import request, current_app
+from flask import request
 from flask_classy import FlaskView, route
+from ..config import Config
 from ..lib import PdfGenerator
-from ..lib.util import template_or_json
+
+from ..lib.util import (template_or_json,
+                        _error)
 
 
 class PdfGeneratorRoute(FlaskView):
@@ -36,13 +39,28 @@ class PdfGeneratorRoute(FlaskView):
             # id_tarea = pg.register(request.get_json())
             datos = pg.resolve(request.get_json())
 
-            return dict(status=True, pdf=datos['pdf'])
+            return {'status': True, 'pdf': datos['pdf']}
 
         except Exception as e:
-            current_app.logger.error(e)
-            return dict(status=False)
+            _error(e)
+            return {'status': False}
 
+    @route('/status', methods=['GET'])
+    @template_or_json()
+    def status(self):
+        try:
+            return {
+                'status': True,
+                'config': {
+                    'wkhtmltopdf_path': Config.WKHTMLTOPDF_PATH,
+                    'mongodb': {
+                        'dbname': Config.MONGO_DBNAME,
+                        'host': Config.MONGO_HOST,
+                    },
+                    'commands': [f'{c[0]}.{c[1]}::{c[2]}' for c in Config.COMMANDS],
+                }
+            }
 
-# def init_routes(app):
-#     """Route initialization."""
-#     PdfGeneratorRoute.register(app, route_base='/')
+        except Exception as e:
+            _error(e)
+            return {'status': False}
