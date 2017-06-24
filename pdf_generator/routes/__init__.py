@@ -2,6 +2,7 @@
 
 from flask import request
 from flask_classy import FlaskView, route
+import pendulum
 import pytz
 import datetime as dt
 import pymongo
@@ -54,16 +55,13 @@ class PdfGeneratorRoute(FlaskView):
     def status(self):
         try:
             # obtener tareas pendientes de limpieza
-            max_age = Config.get('PDF_GENERATOR_MAX_AGE', 12 * 3600)
-            limit = dt.datetime.now(pytz.utc) - dt.timedelta(seconds=max_age)
-
-            qry = {
-                'completado': {'$lt': limit},
+            qry_pendientes_limpieza = {
+                'completado': {'$ne': None},
                 'limpio': None
             }
 
             num_tareas = mongo.db.tareas.count()
-            num_tareas_pendientes_limpieza = mongo.db.tareas.count(qry)
+            num_tareas_pendientes_limpieza = mongo.db.tareas.count(qry_pendientes_limpieza)
 
             # en proceso
             qry_en_proceso = {
@@ -86,9 +84,58 @@ class PdfGeneratorRoute(FlaskView):
             num_tareas_pendientes = mongo.db.tareas.count(qry_pendientes)
 
             # timezone
-            tz = request.args.get('tz', Config.get('PDF_GENERATOR_TIMEZONE', 'Europe/Madrid'))
+            tz = request.args.get('tz') or Config.get('PDF_GENERATOR_TIMEZONE', 'Europe/Madrid')
 
             ahora = dt.datetime.now(pytz.utc)
+            ahora_ = pendulum.from_timestamp(ahora.timestamp()).now('UTC')
+
+            # últimas 24h
+            hace_24h = dt.datetime.fromtimestamp(ahora_.subtract(hours=24).timestamp()).astimezone(pytz.utc)
+
+            qry_24h_registradas = {
+                'registrado': {
+                    '$gt': hace_24h,
+                    '$lt': ahora,
+                }
+            }
+
+            num_tareas_24h_registradas = mongo.db.tareas.count(qry_24h_registradas)
+
+            # últimos 30 días
+            hace_30d = dt.datetime.fromtimestamp(ahora_.subtract(days=30).timestamp()).astimezone(pytz.utc)
+
+            qry_30d_registradas = {
+                'registrado': {
+                    '$gt': hace_30d,
+                    '$lt': ahora,
+                }
+            }
+
+            num_tareas_30d_registradas = mongo.db.tareas.count(qry_30d_registradas)
+
+            # últimos 6 meses
+            hace_6m = dt.datetime.fromtimestamp(ahora_.subtract(months=6).timestamp()).astimezone(pytz.utc)
+
+            qry_6m_registradas = {
+                'registrado': {
+                    '$gt': hace_6m,
+                    '$lt': ahora,
+                }
+            }
+
+            num_tareas_6m_registradas = mongo.db.tareas.count(qry_6m_registradas)
+
+            # último año
+            hace_1y = dt.datetime.fromtimestamp(ahora_.subtract(years=1).timestamp()).astimezone(pytz.utc)
+
+            qry_1y_registradas = {
+                'registrado': {
+                    '$gt': hace_1y,
+                    '$lt': ahora,
+                }
+            }
+
+            num_tareas_1y_registradas = mongo.db.tareas.count(qry_1y_registradas)
 
             # última tarea REGISTRADA
             ultima_tarea_registrada = mongo.db.tareas.find({})\
@@ -158,15 +205,23 @@ class PdfGeneratorRoute(FlaskView):
                 #     'commands': [f'{c[0]}.{c[1]}::{c[2]}' for c in Config.COMMANDS],
                 # },
                 'data': {
-                    'tareas_totales': num_tareas,
                     'tareas_pendientes_limpieza': num_tareas_pendientes_limpieza,
                     'tareas_no_completadas': num_tareas_no_completadas,
                     'tareas_pendientes': num_tareas_pendientes,
                     'tareas_en_proceso': num_tareas_en_proceso,
                     'tz': tz,
-                    'ultima_tarea_registrada': ultima_tarea_registrada_,
-                    'ultima_tarea_completada': ultima_tarea_completada_,
+                    'ultima_tarea': {
+                        'registrada': ultima_tarea_registrada_,
+                        'completada': ultima_tarea_completada_,
+                    },
                     'limpieza': limpieza_done,
+                    'tareas_registradas': {
+                        'totales': num_tareas,
+                        '24h': num_tareas_24h_registradas,
+                        '30d': num_tareas_30d_registradas,
+                        '6m': num_tareas_6m_registradas,
+                        '1y': num_tareas_1y_registradas,
+                    },
                 }
             }
 

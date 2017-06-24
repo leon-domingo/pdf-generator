@@ -1,6 +1,6 @@
 FROM leondomingo/ubuntu16.04-python3.6.1
 LABEL name "pdf-generator"
-ENV UPDATED=20170622_1140
+ENV UPDATED=20170624_1800
 
 # switch "sh" and "bash"
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
