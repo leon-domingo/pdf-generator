@@ -31,6 +31,9 @@ class BaseConfig(object):
     # wkhtmltopdf
     WKHTMLTOPDF_PATH = '/home/leon/app/bin/wkhtmltopdf'
 
+    # default timezone
+    PDF_GENERATOR_TIMEZONE = 'Europe/Madrid'
+
     PDF_GENERATOR_DEFAULT_PRIORITY = int(os.environ.get('PDF_GENERATOR_DEFAULT_PRIORITY', 10))
 
     PDF_GENERATOR_PROCESOS = [
