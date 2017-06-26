@@ -1,6 +1,6 @@
 FROM leondomingo/ubuntu16.04-python3.6.1
 LABEL name "pdf-generator"
-ENV UPDATED=20170624_1800
+ENV UPDATED=20170626_2300
 
 # switch "sh" and "bash"
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
@@ -11,9 +11,9 @@ RUN apt-get update -y
 # instalar wkhtmltopdf (/wkhtmltox/bin/wkhtmltopdf)
 RUN apt-get install -y libxrender1 libfontconfig1 libxext6
 WORKDIR /
-RUN wget -q "https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz"
-RUN tar xJf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
-RUN rm wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+RUN wget -q "https://downloads.wkhtmltopdf.org/0.12/0.12.3/wkhtmltox-0.12.3_linux-generic-amd64.tar.xz"
+RUN tar xJf wkhtmltox-0.12.3_linux-generic-amd64.tar.xz
+RUN rm wkhtmltox-0.12.3_linux-generic-amd64.tar.xz
 
 # copiar aplicación Flask (Python)
 RUN mkdir app
