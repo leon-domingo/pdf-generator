@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en-EN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link rel="shortcut icon" type="image/png" href="/images/favicon.png" />
+    <title>PDF generator | Home</title>
+    <link rel="icon" type="image/png" href="/images/favicon.png" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" />
+    <link href='//fonts.googleapis.com/css?family=Roboto:200,300,400,500,600' rel="stylesheet" type="text/css" />
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:200,300,400,500,600' rel="stylesheet" type="text/css" />
+    <link href='//fonts.googleapis.com/css?family=Raleway:200,300,400,500,600,700,800,900' rel="stylesheet" type="text/css" />
+    <link href="//fonts.googleapis.com/css?family=Cutive+Mono" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css" />
+    <!-- <link href="/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- <link href="/css/foundation.min.css?6_3_0" rel="stylesheet" type="text/css"> -->
+    <!-- <link href="/css/style.css?1499436086615" rel="stylesheet" type="text/css"> -->
+  </head>
+
+  <body>
+    <main>
+      <h1>{{ message_title }}</h1>
+      <p>This a <strong>Flask</strong> app which uses <strong>wkhtmltopdf</strong> (to generate the PDF itself) and <strong>MongoDB</strong> (to implement a queue of processes), to create an API-based service that generate PDFs from HTML. Everything is “packaged” into a <strong>Docker</strong> image. That's what you're seeing now, served by <a href="https://zeit.co" target="_blank">ZEIT</a>, though you can deploy it as a set of services instead of a monolithic arquitecture.</p>
+
+      <p>You have to send the URL from which <strong>wkhtmltopdf</strong> will generate the PDF, among other parameters. So it's up to you to serve the HTML content that it'll be converted into a PDF</p>
+
+      <p>There's only one service in the API:</p>
+      <h3 class="service-title">/to-pdf</h3>
+      <h4 class="service-param">Content-Type: <strong>application/json</strong></h4>
+      <h4 class="service-param">Method: <strong>POST</strong></h4>
+      <div class="pre">
+        {<br/>
+         &nbsp;&nbsp;"url": "...",<br/>
+         &nbsp;&nbsp;"headers": [["name", "value"], ...],<br/>
+         &nbsp;&nbsp;"cookies": [["name", "value"], ...],<br/>
+         &nbsp;&nbsp;"margins": [10, 10, 10, 10],<br/>
+         &nbsp;&nbsp;"size: "A3"<br/>
+         &nbsp;&nbsp;"viewport-size": "1200x1200"<br/>
+         &nbsp;&nbsp;"attachments": ["...", ...]<br/>
+        }<br/>
+      </div>
+
+      <h4 class="service-param">url</h4>
+      <p class="desc">The URL to get the HTML page that will be converted to PDF.</p>
+
+      <h4 class="service-param">headers</h4>
+      <p class="desc">Corresponds to the <span>--custom-header</span> parameter of <strong>wkhtmltopdf</strong>. You can indicate as many headers as you want. For example:</p>
+
+      <div class="pre">
+        {<br/>
+        &nbsp;&nbsp;"headers": [<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;["Authorization", "mySecretToken"],<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;["X-MyCustom-Header", "my-custom-value"],<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;...<br/>
+        &nbsp;&nbsp;]<br/>
+        }<br/>
+      </div>
+
+      <p class="desc">These headers will be included in the request to <span>url</span>, so it'll depend on your needs.</p>
+
+      <p class="desc"><strong>TIP</strong>: Use <span>Authorization</span> header to control access to “your” <span>url</span>, so it won't be accessible by anyone.</p>
+
+      <h4 class="service-param">cookies</h4>
+      <p class="desc">Corresponds to the <span>--cookie</span> parameter of <strong>wkhtmltopdf</strong>. You can add as many as you want and they all will be included in the request to <span>url</span>, so it depends on your needs. For example:</p>
+
+      <div class="pre">
+        {<br/>
+        &nbsp;&nbsp;"cookies": [<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;["some-lang-cookie", "en"],<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;["foo", "bar-and-baz"],<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;...<br/>
+        &nbsp;&nbsp;]<br/>
+        }<br/>
+      </div>
+
+      <h4 class="service-param">margins</h4>
+      <p class="desc">Corresponds to the 4 parameters of <strong>wkhtmltopdf</strong> for <span>margin-top</span>, <span>margin-right</span>, <span>margin-bottom</span> and <span>margin-left</span>.</p>
+
+      <h4 class="service-param">size</h4>
+      <h5 class="service-default-value">defaut value: A3</h5>
+      <p class="desc">Corresponds to the <span>-s</span> / <span>--page-size</span> parameter of <strong>wkhtmltopdf</strong>, which indicates the paper size of the resulting PDF. Possible values are <span>A3</span>, <span>A4</span>, <span>Letter</span>, ...</p>
+
+      <h4 class="service-param">viewport-size</h4>
+      <p class="desc">Corresponds to the <span>--viewport-size</span> parameter of <strong>wkhtmltopdf</strong>, which indicates the size of the window the <span>url</span> will be viewed, in the form <span>WxH</span>. For example, <span>1200x1200</span></p>
+
+      <h4 class="service-param">attachments</h4>
+      <p class="desc">A list of base64-encoded strings representing PDFs files to be added at the end of the resulting PDF. They'll be included in the same order as they come in the list.</p>
+
+      <p class="desc"><strong>TIP</strong>: If your generating a contract this can be used to include the terms and conditions.</p>
+
+      <h3 class="service-title">response</h3>
+      <h4 class="service-param">Content-Type: <strong>application/json</strong></h4>
+
+      <div class="pre">
+        {<br/>
+         &nbsp;&nbsp;"status": true/false,<br/>
+         &nbsp;&nbsp;"pdf": "...",<br/>
+        }<br/>
+      </div>
+
+      <h4 class="service-param">status</h4>
+      <p class="desc">A boolean value depending on the result. <span>true</span> if it's successful, or <span>false</span> if not.</p>
+
+      <h4 class="service-param">pdf</h4>
+      <p class="desc">A base64-enconded string of the resulting PDF file, in case of success.</p>
+    </main>
+  </body>
+</html>

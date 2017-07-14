@@ -1,6 +1,6 @@
 # coding=utf8
 
-from flask import request
+from flask import request, render_template
 from flask_classy import FlaskView, route
 import pendulum
 import pytz
@@ -17,6 +17,10 @@ from ..lib.util import (template_or_json,
 class PdfGeneratorRoute(FlaskView):
 
     route_prefix = ''
+
+    @route('/', methods=['GET'])
+    def index(self):
+        return render_template('index.html', **{'message_title': 'Welcome to PDF generator'})
 
     # /to-pdf
     @route('/to-pdf', methods=['POST'])
