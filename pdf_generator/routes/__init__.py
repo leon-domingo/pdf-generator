@@ -20,7 +20,7 @@ class PdfGeneratorRoute(FlaskView):
 
     @route('/', methods=['GET'])
     def index(self):
-        return render_template('index.html', **{'message_title': 'Welcome to PDF generator'})
+        return render_template('index.html')  # , **{'message_title': 'Welcome to PDF generator'})
 
     # /to-pdf
     @route('/to-pdf', methods=['POST'])

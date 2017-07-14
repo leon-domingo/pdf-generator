@@ -8,19 +8,16 @@
     <link rel="icon" type="image/png" href="/images/favicon.png" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" />
     <link href='//fonts.googleapis.com/css?family=Roboto:200,300,400,500,600' rel="stylesheet" type="text/css" />
-    <link href='//fonts.googleapis.com/css?family=Open+Sans:200,300,400,500,600' rel="stylesheet" type="text/css" />
-    <link href='//fonts.googleapis.com/css?family=Raleway:200,300,400,500,600,700,800,900' rel="stylesheet" type="text/css" />
+    <!-- <link href='//fonts.googleapis.com/css?family=Open+Sans:200,300,400,500,600' rel="stylesheet" type="text/css" /> -->
+    <!-- <link href='//fonts.googleapis.com/css?family=Raleway:200,300,400,500,600,700,800,900' rel="stylesheet" type="text/css" /> -->
     <link href="//fonts.googleapis.com/css?family=Cutive+Mono" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css" />
-    <!-- <link href="/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
-    <!-- <link href="/css/foundation.min.css?6_3_0" rel="stylesheet" type="text/css"> -->
-    <!-- <link href="/css/style.css?1499436086615" rel="stylesheet" type="text/css"> -->
   </head>
 
   <body>
     <main>
-      <h1>{{ message_title }}</h1>
-      <p>This a <strong>Flask</strong> app which uses <strong>wkhtmltopdf</strong> (to generate the PDF itself) and <strong>MongoDB</strong> (to implement a queue of processes), to create an API-based service that generate PDFs from HTML. Everything is “packaged” into a <strong>Docker</strong> image. That's what you're seeing now, served by <a href="https://zeit.co" target="_blank">ZEIT</a>, though you can deploy it as a set of services instead of a monolithic arquitecture.</p>
+      <h1>Welcome to PDF generator</h1>
+      <p>This a <a href="http://flask.pocoo.org" target="_blank">Flask</a> app which uses <a href="https://wkhtmltopdf.org" target="_blank">wkhtmltopdf</a> (to generate the PDF itself) and <a href="https://www.mongodb.com" target="_blank">MongoDB</a> (to implement a queue of processes), to create an API-based service that generate PDFs from HTML. Everything is “packaged” into a <a href="https://www.docker.com" target="_blank">Docker</a> image. That's what you're seeing now, served by <a href="https://zeit.co" target="_blank">ZEIT</a>, though you can deploy it as a set of services instead of a monolithic arquitecture.</p>
 
       <p>You have to send the URL from which <strong>wkhtmltopdf</strong> will generate the PDF, among other parameters. So it's up to you to serve the HTML content that it'll be converted into a PDF</p>
 
