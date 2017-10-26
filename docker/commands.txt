@@ -2,7 +2,7 @@
 $ docker build -t leondomingo/pdf-generator .
 
 # run
-$ docker run -d --name "pdf-generator" -p 5550:8000 leondomingo/pdf-generator
+$ docker run -d --name "pdf-generator" -p 5550:8000 --restart always leondomingo/pdf-generator
 
 # push
 $ docker push leondomingo/pdf-generator
