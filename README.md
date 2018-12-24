@@ -66,7 +66,8 @@ Corresponds to the 4 parameters of **wkhtmltopdf** for _margin-top_, _margin-rig
 _defaut value:_ **A3**
 
 Corresponds to the _-s_ / _--page-size_ parameter of **wkhtmltopdf**, which indicates the **paper size** of the resulting PDF. Possible values are A3, A4, Letter, ...
-viewport-size
+
+### viewport-size
 
 Corresponds to the _--viewport-size_ parameter of **wkhtmltopdf**, which indicates the **size of the window** the url will be viewed, in the form **WxH**. For example, **1200x1200**
 
@@ -74,7 +75,7 @@ Corresponds to the _--viewport-size_ parameter of **wkhtmltopdf**, which indicat
 
 A list of **base64-encoded strings** representing the PDFs files to be added at the end of the resulting PDF. They'll be included in the same order as they come in the list.
 
-**TIP**: If your generating a contract this can be used to include the **terms and conditions**.
+**TIP**: If you're generating a contract, for example, this can be used to include the **terms and conditions**.
 
 ### response
 
